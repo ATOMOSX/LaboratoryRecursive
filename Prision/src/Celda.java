@@ -6,6 +6,9 @@ public class Celda {
         this.prisionero = prisionero;
     }
 
+    public Celda() {
+    }
+
     public boolean vacia(){
         return prisionero == null;
     }

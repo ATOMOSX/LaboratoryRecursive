@@ -2,16 +2,37 @@
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
     public static void main(String[] args) {
-        // Press Alt+Intro with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        Piso piso = new Piso(2, 3);
 
-        // Press Mayús+F10 or click the green arrow button in the gutter to run the code.
-        for (int i = 1; i <= 5; i++) {
+        agregarPrisionerosAlPiso(piso);
+//        verificarEstadoPiso(piso);
 
-            // Press Mayús+F9 to start debugging your code. We have set one breakpoint
-            // for you, but you can always add more by pressing Ctrl+F8.
-            System.out.println("i = " + i);
+        if (piso.verificarEstado()) {
+            System.out.println("El estado de las celdas es correcto.");
+        } else {
+            System.out.println("Hay celdas ocupadas incorrectamente.");
+        }
+    }
+
+    private static void agregarPrisionerosAlPiso(Piso piso) {
+
+        piso.agregarPrisionero(0, 0, new Prisionero("Prisionero 1"));
+        piso.agregarPrisionero(0, 1, new Prisionero("Prisionero 2"));
+        piso.agregarPrisionero(1, 1, new Prisionero("Prisionero 3"));
+        piso.agregarPrisionero(1, 1, new Prisionero("Prisionero 4"));
+    }
+
+
+
+    private static void verificarEstadoPiso(Piso piso) {
+
+        boolean estadoCorrecto = piso.verificarEstado();
+
+        if (estadoCorrecto){
+            System.out.println("El estado de las celdas es correcto.");
+        }
+        else {
+            System.out.println("Hay celdas ocupadas incorrectamente");
         }
     }
 }
