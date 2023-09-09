@@ -1,38 +1,33 @@
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
-        Piso piso = new Piso(2, 3);
+        Carcel carcel = new Carcel(5, 6);
 
-        agregarPrisionerosAlPiso(piso);
-//        verificarEstadoPiso(piso);
+        // Agregar prisioneros
+        carcel.agregarPrisionero(0, 2, new Prisionero("Prisionero 1"));
+        carcel.agregarPrisionero(0, 3, new Prisionero("Prisionero 2"));
+        carcel.agregarPrisionero(2, 2, new Prisionero("Prisionero 3"));
+        carcel.agregarPrisionero(2, 4, new Prisionero("Prisionero 4"));
+        carcel.agregarPrisionero(3, 0, new Prisionero("Prisionero 5"));
 
-        if (piso.verificarEstado()) {
-            System.out.println("El estado de las celdas es correcto.");
-        } else {
-            System.out.println("Hay celdas ocupadas incorrectamente.");
-        }
-    }
+        // Dejar tres celdas desocupadas
+        carcel.obtenerCelda(0, 0).setEstado(Celda.Estado.DISPONIBLE);
+        carcel.obtenerCelda(0, 4).setEstado(Celda.Estado.DISPONIBLE);
+        carcel.obtenerCelda(4, 4).setEstado(Celda.Estado.DISPONIBLE);
 
-    private static void agregarPrisionerosAlPiso(Piso piso) {
+        // Dejar dos celdas con un prisionero
+        carcel.agregarPrisionero(0, 1, new Prisionero("Prisionero 6"));
+        carcel.agregarPrisionero(3, 2, new Prisionero("Prisionero 7"));
 
-        piso.agregarPrisionero(0, 0, new Prisionero("Prisionero 1"));
-        piso.agregarPrisionero(0, 1, new Prisionero("Prisionero 2"));
-        piso.agregarPrisionero(1, 1, new Prisionero("Prisionero 3"));
-        piso.agregarPrisionero(1, 1, new Prisionero("Prisionero 4"));
-    }
+        // Iniciar movimiento desde la celda de entrada (E)
+        int filaInicio = 4; // Fila de la celda de entrada
+        int columnaInicio = 0; // Columna de la celda de entrada
+        List<String> informe = carcel.realizarMovimiento(filaInicio, columnaInicio, 5);
 
-
-
-    private static void verificarEstadoPiso(Piso piso) {
-
-        boolean estadoCorrecto = piso.verificarEstado();
-
-        if (estadoCorrecto){
-            System.out.println("El estado de las celdas es correcto.");
-        }
-        else {
-            System.out.println("Hay celdas ocupadas incorrectamente");
+        // Imprimir el informe
+        for (String mensaje : informe) {
+            System.out.println(mensaje);
         }
     }
 }
