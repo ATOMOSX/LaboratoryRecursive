@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/CombinacionDado/CombinacionDado.iml" filepath="$PROJECT_DIR$/CombinacionDado/CombinacionDado.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/LaboratoryRecursive.iml" filepath="$PROJECT_DIR$/.idea/LaboratoryRecursive.iml" />
       <module fileurl="file://$PROJECT_DIR$/Prision/untitled.iml" filepath="$PROJECT_DIR$/Prision/untitled.iml" />
     </modules>
