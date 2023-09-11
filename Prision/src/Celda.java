@@ -6,12 +6,14 @@ public class Celda {
     private Prisionero[] prisioneros;
     private int fila;
     private int columna;
+    private boolean visitada;
 
     public Celda(Tipo tipo) {
         this.tipo = tipo;
         this.estado = Estado.DISPONIBLE;
         this.codigoCelda = generarCodigoCelda();
         this.prisioneros = new Prisionero[2]; //Hasta 2 prisioneros en una celda
+        this.visitada = false;
     }
 
     public void setUbicacion(int fila, int columna){
@@ -49,6 +51,14 @@ public class Celda {
 
     public Prisionero[] getPrisioneros() {
         return prisioneros;
+    }
+
+    public boolean esVisitada() {
+        return visitada;
+    }
+
+    public void setVisitada(boolean visitada) {
+        this.visitada = visitada;
     }
 
     public boolean agregarPrisionero(Prisionero prisionero){

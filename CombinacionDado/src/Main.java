@@ -8,7 +8,7 @@ public class Main {
 
     public static void tiradasMayoresValorSuperar(int[] dados, int valorSuperar, int suma, int tirada){
 
-        if (tirada == dados.length && suma == valorSuperar){
+        if (tirada == dados.length && suma > valorSuperar){
             for (int i = 0; i < dados.length; i++){
                 if (i == dados.length -1){
                     System.out.print(dados[i] + " = ");

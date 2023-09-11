@@ -9,6 +9,7 @@ public class Carcel {
     private int filas;
     private int columnas;
 
+
     public Carcel(int filas, int columnas) {
         this.filas = filas;
         this.columnas = columnas;
@@ -92,43 +93,216 @@ public class Carcel {
         return fila >= 0 && fila < filas && columna >= 0 && columna < columnas;
     }
 
-    public List<String> realizarMovimiento(int filaInicio, int columnaInicio, int limiteProfundidad) {
+    public boolean verificarEstadoCeldas() {
+        boolean celdasFaltantes = false;
+
+        for (int fila = 0; fila < filas; fila++) {
+            for (int columna = 0; columna < columnas; columna++) {
+                Celda celda = matrizCelda[fila][columna];
+                if (celda.getTipo() == Celda.Tipo.CELDA && celda.getEstado() != Celda.Estado.OCUPADO) {
+                    celdasFaltantes = true;
+                    System.out.println("La celda en la fila " + fila + ", columna " + columna + " está vacía.");
+                }
+            }
+        }
+
+        return celdasFaltantes;
+    }
+
+    public void encontrarPrisionerosFaltantes() {
+        Set<Prisionero> prisionerosEnCeldas = new HashSet<>();
+
+        for (int fila = 0; fila < filas; fila++) {
+            for (int columna = 0; columna < columnas; columna++) {
+                Celda celda = matrizCelda[fila][columna];
+                Prisionero[] prisioneros = celda.getPrisioneros();
+                for (Prisionero prisionero : prisioneros) {
+                    if (prisionero != null) {
+                        prisionerosEnCeldas.add(prisionero);
+                    }
+                }
+            }
+        }
+
+        for (int fila = 0; fila < filas; fila++) {
+            for (int columna = 0; columna < columnas; columna++) {
+                Celda celda = matrizCelda[fila][columna];
+                Prisionero[] prisioneros = celda.getPrisioneros();
+                for (Prisionero prisionero : prisioneros) {
+                    if (prisionero != null && !prisionerosEnCeldas.contains(prisionero)) {
+                        System.out.println("El prisionero " + prisionero.getNombre() + " está en una celda incorrecta en la fila " + fila + ", columna " + columna + ".");
+                    }
+                }
+            }
+        }
+    }
+//
+//    public void buscarPorFilas(Celda[][] matriz, int fila, int columna, List<String> informe, Set<String> celdasVisitadas) {
+//        if (!esValida(fila, columna) || matriz[fila][columna].getTipo() == Celda.Tipo.SALIDA || celdasVisitadas.contains(matriz[fila][columna].getCodigoCelda())) {
+//            return;
+//        }
+//
+//        Celda celdaActual = matriz[fila][columna];
+//        informe.add("Celda Actual: " + celdaActual.getCodigoCelda());
+//        informe.add("Prisioneros en la celda: " + obtenerNombresPrisionero(celdaActual));
+//        informe.add("Estado de la celda: " + celdaActual.getEstado());
+//
+//        celdasVisitadas.add(celdaActual.getCodigoCelda());
+//
+//        int[] movimientosFilas = {-1, 1, 0, 0};
+//        int[] movimientosColumnas = {0, 0, -1, 1};
+//
+//        for (int i = 0; i < 4; i++) {
+//            int nuevaFila = fila + movimientosFilas[i];
+//            int nuevaColumna = columna + movimientosColumnas[i];
+//
+//            if (esValida(nuevaFila, nuevaColumna)) {
+//                Celda celdaSiguiente = matriz[nuevaFila][nuevaColumna];
+//                informe.add("Movimiento en fila " + (i + 1) + ":");
+//                buscarPorFilas(matriz, nuevaFila, nuevaColumna, informe, celdasVisitadas);
+//            }
+//        }
+//    }
+//    public void buscarPorColumnas(Celda[][] matriz, int fila, int columna, List<String> informe, Set<String> celdasVisitadas) {
+//        if (!esValida(fila, columna) || matriz[fila][columna].getTipo() == Celda.Tipo.SALIDA || celdasVisitadas.contains(matriz[fila][columna].getCodigoCelda())) {
+//            return;
+//        }
+//
+//        Celda celdaActual = matriz[fila][columna];
+//        informe.add("Celda Actual: " + celdaActual.getCodigoCelda());
+//        informe.add("Prisioneros en la celda: " + obtenerNombresPrisionero(celdaActual));
+//        informe.add("Estado de la celda: " + celdaActual.getEstado());
+//
+//        celdasVisitadas.add(celdaActual.getCodigoCelda());
+//
+//        int[] movimientosFilas = {-1, 1, 0, 0};
+//        int[] movimientosColumnas = {0, 0, -1, 1};
+//
+//        for (int i = 0; i < 4; i++) {
+//            int nuevaFila = fila + movimientosFilas[i];
+//            int nuevaColumna = columna + movimientosColumnas[i];
+//
+//            if (esValida(nuevaFila, nuevaColumna)) {
+//                Celda celdaSiguiente = matriz[nuevaFila][nuevaColumna];
+//                informe.add("Movimiento en columna " + (i + 1) + ":");
+//                buscarPorColumnas(matriz, nuevaFila, nuevaColumna, informe, celdasVisitadas);
+//            }
+//        }
+//    }
+
+    public List<String> buscarPorFilas(int filaInicio, int columnaInicio, int filaSalida, int columnaSalida) {
         List<String> informe = new ArrayList<>();
         Celda celdaInicio = obtenerCelda(filaInicio, columnaInicio);
+        Celda celdaSalida = obtenerCelda(filaSalida, columnaSalida);
 
-        if (celdaInicio.getTipo() == Celda.Tipo.ENTRADA) {
-            informe.add("Comenzando en la celda " + celdaInicio.getCodigoCelda());
-            realizarMovimientoRecursivo(celdaInicio, informe, 0, limiteProfundidad);
+        if (celdaInicio.getTipo() == Celda.Tipo.ENTRADA && celdaSalida.getTipo() == Celda.Tipo.SALIDA) {
+            buscarPorFilasRecursivo(celdaInicio, celdaSalida, informe);
         } else {
-            informe.add("El guardia debe comenzar en una celda de entrada.");
+            informe.add("La celda de inicio debe ser de entrada y la celda de salida debe ser de salida.");
         }
 
         return informe;
     }
-    private void realizarMovimientoRecursivo(Celda celdaActual, List<String> informe, int contadorMovimientos, int limiteProfundidad) {
-        if (celdaActual == null || contadorMovimientos >= limiteProfundidad) {
-            return;
-        }
 
-        informe.add("Prisioneros en la celda " + celdaActual.getCodigoCelda() + obtenerNombresPrisionero(celdaActual));
-        informe.add("Estado de la celda: " + celdaActual.getEstado());
-
+    private void buscarPorFilasRecursivo(Celda celdaActual, Celda celdaSalida, List<String> informe) {
         int filaActual = celdaActual.getFila();
         int columnaActual = celdaActual.getColumna();
 
-        int[] movimientosFilas = {-1, 1, 0, 0};
-        int[] movimientosColumnas = {0, 0, -1, 1};
+        // Agregar informe solo si es una celda
+        if (celdaActual.getTipo() == Celda.Tipo.CELDA) {
+            informe.add("Celda: " + celdaActual.getCodigoCelda());
+            informe.add("Prisioneros: " + obtenerNombresPrisionero(celdaActual));
+            informe.add("Estado: " + celdaActual.getEstado());
+        }
 
-        for (int i = 0; i < 4; i++) {
-            int nuevaFila = filaActual + movimientosFilas[i];
-            int nuevaColumna = columnaActual + movimientosColumnas[i];
+        // Marcamos la celda actual como visitada para evitar bucles infinitos
+        celdaActual.setVisitada(true);
 
-            if (esValida(nuevaFila, nuevaColumna)) {
-                Celda celdaSiguiente = obtenerCelda(nuevaFila, nuevaColumna);
-                informe.add("Movimiento " + (i + 1) + ":");
-                informe.add("Celda Siguiente: " + celdaSiguiente.getCodigoCelda());
-                realizarMovimientoRecursivo(celdaSiguiente, informe, contadorMovimientos + 1, limiteProfundidad);
+        // Comprobar si hemos llegado a la salida
+        if (celdaActual.equals(celdaSalida)) {
+            informe.add("Fin del camino");
+            return;
+        }
+
+        // Moverse a la izquierda
+        if (columnaActual > 0 && !obtenerCelda(filaActual, columnaActual - 1).esVisitada()) {
+            buscarPorFilasRecursivo(obtenerCelda(filaActual, columnaActual - 1), celdaSalida, informe);
+        }
+
+        if (columnaActual < columnas - 1 && !obtenerCelda(filaActual, columnaActual + 1).esVisitada()) {
+            buscarPorFilasRecursivo(obtenerCelda(filaActual, columnaActual + 1), celdaSalida, informe);
+        }
+
+        // Marcar la celda actual como no visitada para permitir otros caminos
+        celdaActual.setVisitada(false);
+    }
+
+    public List<String> buscarPorColumnas(int filaInicio, int columnaInicio, int filaSalida, int columnaSalida) {
+        List<String> informe = new ArrayList<>();
+        Celda celdaInicio = obtenerCelda(filaInicio, columnaInicio);
+        Celda celdaSalida = obtenerCelda(filaSalida, columnaSalida);
+
+        if (celdaInicio.getTipo() == Celda.Tipo.ENTRADA && celdaSalida.getTipo() == Celda.Tipo.SALIDA) {
+            buscarPorColumnasRecursivo(celdaInicio, celdaSalida, informe);
+        } else {
+            informe.add("La celda de inicio debe ser de entrada y la celda de salida debe ser de salida.");
+        }
+
+        return informe;
+    }
+
+    private void buscarPorColumnasRecursivo(Celda celdaActual, Celda celdaSalida, List<String> informe) {
+        int filaActual = celdaActual.getFila();
+        int columnaActual = celdaActual.getColumna();
+
+        // Agregar informe solo si es una celda
+        if (celdaActual.getTipo() == Celda.Tipo.CELDA) {
+            informe.add("Celda: " + celdaActual.getCodigoCelda());
+            informe.add("Prisioneros: " + obtenerNombresPrisionero(celdaActual));
+            informe.add("Estado: " + celdaActual.getEstado());
+        }
+
+        // Marcamos la celda actual como visitada para evitar bucles infinitos
+        celdaActual.setVisitada(true);
+
+        // Comprobar si hemos llegado a la salida
+        if (celdaActual.equals(celdaSalida)) {
+            informe.add("Fin del camino");
+            return;
+        }
+
+        // Moverse hacia arriba
+        if (filaActual > 0 && !obtenerCelda(filaActual - 1, columnaActual).esVisitada()) {
+            buscarPorColumnasRecursivo(obtenerCelda(filaActual - 1, columnaActual), celdaSalida, informe);
+        }
+
+        // Moverse hacia abajo
+        if (filaActual < filas - 1 && !obtenerCelda(filaActual + 1, columnaActual).esVisitada()) {
+            buscarPorColumnasRecursivo(obtenerCelda(filaActual + 1, columnaActual), celdaSalida, informe);
+        }
+
+        // Marcar la celda actual como no visitada para permitir otros caminos
+        celdaActual.setVisitada(false);
+    }
+
+
+        public void verificarPrisioneros(Celda celda) {
+        Prisionero[] prisioneros = celda.getPrisioneros();
+        boolean celdaVacia = true;
+
+        for (Prisionero prisionero : prisioneros) {
+            if (prisionero != null) {
+                celdaVacia = false;
+                break;
             }
         }
+
+        if (celdaVacia) {
+            System.out.println("Falta un prisionero en la celda " + celda.getCodigoCelda());
+        }
+    }
+
+    public Celda[][] getMatrizCelda() {
+        return matrizCelda;
     }
 }
